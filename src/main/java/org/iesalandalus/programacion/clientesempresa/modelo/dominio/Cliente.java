@@ -5,152 +5,159 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.iesalandalus.programacion.utilidades.Entrada;
+
 
 public class Cliente {
 
-	private String ER_CORREO = "[a-zA-Z0-9_]+@[a-zA-Z0-9_]+[.com|.es|.org]" ;
-	private String ER_DNI ="(\\d{8})([a-zA-Z])" ;
+	private String ER_CORREO = "[a-zA-Z0-9_]+@[a-zA-Z0-9_]+[.com|.es|.org]";
+	private static String ER_DNI = "(\\d{8})([a-zA-Z])";
 	private String ER_TELEFONO = "[967]\\d{8}";
-	public String FORMATO_FECHA ="dd/mm/yyyy";
+	public String FORMATO_FECHA = "dd/mm/yyyy";
 	private String nombre;
 	private String dni;
 	private String correo;
 	private String telefono;
 	private LocalDate fechaNacimiento;
-	
-public Cliente (Cliente cliente) {
-	if (cliente==null)
-		throw new NullPointerException("ERROR: No es posible copiar un cliente nulo.");
-	setNombre (cliente.getNombre());
-	setDni (cliente.getDni());
-	setCorreo (cliente.getCorreo());
-	setTelefono (cliente.getTelefono());
-	setFechaNacimiento (cliente.getFechaNacimiento());
-}
-	
 
-private static String formateaNombre (String nombre) {
-	String [] texto=nombre.trim().toLowerCase().split("\\s+");
-	String palabra;
-	String nombreFormato="";
-	for (int i=0;i<texto.length;i++)
-	{
-		palabra=texto[i].trim();
-		String letra=palabra.toUpperCase().charAt(0)+"";
-		String resto=palabra.substring(1, palabra.length());
-		String partes=  letra + resto + " ";
-		nombreFormato= nombreFormato + partes;
-		nombre = nombreFormato  ;
+	public Cliente(Cliente cliente) {
+		if (cliente == null)
+			throw new NullPointerException("ERROR: No es posible copiar un cliente nulo.");
+		setNombre(cliente.getNombre());
+		setDni(cliente.getDni());
+		setCorreo(cliente.getCorreo());
+		setTelefono(cliente.getTelefono());
+		setFechaNacimiento(cliente.getFechaNacimiento());
 	}
-	return nombre;
-}
-private boolean comprobarLetraDni (String dni) {
-	
-		boolean verificador=false;
+
+	private static String formateaNombre(String nombre) {
+		String[] texto = nombre.trim().toLowerCase().split("\\s+");
+		String palabra;
+		String nombreFormato = "";
+		for (int i = 0; i < texto.length; i++) {
+			palabra = texto[i].trim();
+			String letra = palabra.toUpperCase().charAt(0) + "";
+			String resto = palabra.substring(1, palabra.length());
+			String partes = letra + resto + " ";
+			nombreFormato = nombreFormato + partes;
+			nombre = nombreFormato;
+		}
+		return nombre;
+	}
+
+	public static boolean comprobarLetraDni(String dni) {
+
+		boolean verificador = true;
 		Pattern patron;
 		Matcher comparador;
-		
-		patron =Pattern.compile(ER_DNI);
-		do {
-			System.out.print("Introduce un DNI: ");
-			dni = Entrada.cadena();
-			comparador = patron.matcher(dni);
-		} while (!comparador.matches());
-		
+
+		patron = Pattern.compile(ER_DNI);
+
+		comparador = patron.matcher(dni);
+
+		if (!comparador.matches()) {
+			throw new IllegalArgumentException("ERROR: el dni del cliente no tiene un formato valido");
+		}
+
 		System.out.printf("Numero: %s%n", comparador.group(1));
 		System.out.printf("Letra NIF: %s%n", comparador.group(2));
-		String[] letras = {"T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S", "Q", "V", "H", "L", "C", "K", "E"};
-	        int dniNum = Integer.parseInt(comparador.group(1));
-	        
-	        String letradni = comparador.group(2);
-	        try {
-	            if (
-		        		letras[dniNum % 23] == letradni);
-		        
-		        return true;
-	        } catch (NumberFormatException e) {
-	            return verificador;
-	       
-             }
+		String[] letras = {"T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S", "Q", "V","H", "L", "C", "K", "E" };
+		int dniNum = Integer.parseInt(comparador.group(1));
+		
+
+		String letraDni = comparador.group(2);
+		System.out.println(letras[dniNum % 23]);
+		if (letras[dniNum % 23].equals(letraDni) ) {
+
+			
+			System.out.println("dni es correcto");
+			verificador = true;
+
+		} else {
+			
+
+			verificador = false;
+			System.out.println("dni es incorrecto");
 
 		}
-private String getIniciales() {
-	
-	String [] texto=nombre.trim().toUpperCase().split("\\s+");
-	String palabra;
-	String inicial;
-	String iniciales="";
-	
-	for(int i=0;i<texto.length;i++) {
-		palabra=texto[i].trim();
-		inicial=palabra.charAt(0)+"";
-	iniciales = iniciales + inicial;
-		
+		return verificador;
 	}
-	return iniciales;
-}
 
-public String getNombre() {
-	return nombre;
-}
+	private String getIniciales() {
 
-public void setNombre(String nombre) {
-	this.nombre = nombre;
-}
+		String[] texto = nombre.trim().toUpperCase().split("\\s+");
+		String palabra;
+		String inicial;
+		String iniciales = "";
 
-public String getDni() {
-	return dni;
-}
+		for (int i = 0; i < texto.length; i++) {
+			palabra = texto[i].trim();
+			inicial = palabra.charAt(0) + "";
+			iniciales = iniciales + inicial;
 
-private void setDni(String dni) {
-	this.dni = dni;
-}
+		}
+		return iniciales;
+	}
 
- public String getCorreo() {
-	return correo;
-}
+	public String getNombre() {
+		return nombre;
+	}
 
-@Override
-public String toString() {
-	return "Cliente [nombre=" + (  getIniciales() ) + nombre + ", dni=" + dni + ", correo=" + correo + ", telefono=" + telefono
-			+ ", fechaNacimiento=" + fechaNacimiento + "]";
-}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-@Override
-public int hashCode() {
-	return Objects.hash(dni);
-}
+	public String getDni() {
+		return dni;
+	}
 
-@Override
-public boolean equals(Object obj) {
-	if (this == obj)
-		return true;
-	if (obj == null)
-		return false;
-	if (getClass() != obj.getClass())
-		return false;
-	Cliente other = (Cliente) obj;
-	return Objects.equals(dni, other.dni);
-}
+	private void setDni(String dni) {
+		this.dni = dni;
+	}
 
-public void setCorreo(String correo) {
-	this.correo = correo;
-}
+	public String getCorreo() {
+		return correo;
+	}
 
-public String getTelefono() {
-	return telefono;
-}
+	@Override
+	public String toString() {
+		return "Cliente [nombre=" + (getIniciales()) + nombre + ", dni=" + dni + ", correo=" + correo + ", telefono="
+				+ telefono + ", fechaNacimiento=" + fechaNacimiento + "]";
+	}
 
-public void setTelefono(String telefono) {
-	this.telefono = telefono;
-}
+	@Override
+	public int hashCode() {
+		return Objects.hash(dni);
+	}
 
-public LocalDate getFechaNacimiento() {
-	return fechaNacimiento;
-}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cliente other = (Cliente) obj;
+		return Objects.equals(dni, other.dni);
+	}
 
-public void setFechaNacimiento(LocalDate fechaNacimiento) {
-	this.fechaNacimiento = fechaNacimiento;
-}
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public LocalDate getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
 };
