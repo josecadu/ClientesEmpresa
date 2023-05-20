@@ -29,7 +29,7 @@ public class Cliente {
 		setFechaNacimiento(cliente.getFechaNacimiento());
 	}
 
-	private static String formateaNombre(String nombre) {
+	private  String formateaNombre(String nombre) {
 		String[] texto = nombre.trim().toLowerCase().split("\\s+");
 		String palabra;
 		String nombreFormato = "";
@@ -44,7 +44,7 @@ public class Cliente {
 		return nombre;
 	}
 
-	public static boolean comprobarLetraDni(String dni) {
+	public boolean comprobarLetraDni(String dni) {
 
 		boolean verificador = true;
 		Pattern patron;
@@ -103,7 +103,13 @@ public class Cliente {
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		if (nombre==null)
+			throw new NullPointerException("ERROR: El nombre de un cliente no puede ser nulo.");
+		
+		if (nombre.trim().isEmpty())
+			throw new IllegalArgumentException("ERROR: El nombre de un cliente no puede estar vacío.");
+		
+		this.nombre = formateaNombre(nombre);
 	}
 
 	public String getDni() {
@@ -111,7 +117,16 @@ public class Cliente {
 	}
 
 	private void setDni(String dni) {
-		this.dni = dni;
+		if (dni == null) {
+			throw new NullPointerException("ERROR: El dni de un cliente no puede ser nulo.");
+		}
+		if (dni.trim().isEmpty() || !dni.matches(ER_DNI)) {
+			throw new IllegalArgumentException("ERROR: El dni del cliente no tiene un formato válido.");
+		}
+		if (!comprobarLetraDni(dni)) {
+			throw new IllegalArgumentException("ERROR: La letra del dni del cliente no es correcta.");
+		}
+		this.dni = dni.toUpperCase();
 	}
 
 	public String getCorreo() {
@@ -142,6 +157,12 @@ public class Cliente {
 	}
 
 	public void setCorreo(String correo) {
+		if (correo == null) {
+			throw new NullPointerException("ERROR: El correo de un cliente no puede ser nulo.");
+		}
+		if (!correo.matches(ER_CORREO)) {
+			throw new IllegalArgumentException("ERROR: El correo del cliente no tiene un formato válido.");
+		}
 		this.correo = correo;
 	}
 
@@ -150,6 +171,10 @@ public class Cliente {
 	}
 
 	public void setTelefono(String telefono) {
+		if (telefono == null)
+			throw new NullPointerException("ERROR: El teléfono de un cliente no puede ser nulo.");
+		if (!telefono.matches(ER_TELEFONO))
+			throw new IllegalArgumentException("ERROR: El teléfono del cliente no tiene un formato válido.");
 		this.telefono = telefono;
 	}
 

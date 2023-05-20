@@ -6,13 +6,13 @@ import org.iesalandalus.programacion.clientesempresa.modelo.dominio.Cliente;
 
 public class Clientes {
 	private int capacidad;
-	private static int tamano;
-	private static Cliente[] coleccionClientes;
+	private int tamano;
+	private Cliente[] coleccionClientes;
 
-	public Clientes(int capacidad, int tamano) {
+	public Clientes(int capacidad) {
 		this.capacidad = capacidad;
-		this.tamano = tamano;
-		Clientes.coleccionClientes = new Cliente[capacidad];
+		this.coleccionClientes = new Cliente[capacidad];
+		tamano=0;
 
 	}
 
@@ -29,7 +29,7 @@ public class Clientes {
 	}
 
 	private Cliente[] copiaProfundaClientes() {
-		Cliente[] copiaProfunda = new Cliente[tamano];
+		Cliente[] copiaProfunda = new Cliente[capacidad];
 		for (int i = 0; i < coleccionClientes.length; i++) {
 			copiaProfunda[i] = new Cliente(coleccionClientes[i]);
 		}
@@ -37,7 +37,7 @@ public class Clientes {
 	}
 
 	private boolean capacidadSuperada(int indice) {
-		if (capacidad >= indice) {
+		if (indice >= capacidad) {
 			return true;
 		} else {
 			return false;
@@ -46,7 +46,7 @@ public class Clientes {
 	}
 
 	private boolean tamanoSuperado(int indice) {
-		if (tamano >= indice) {
+		if (indice >= tamano) {
 			return true;
 		} else {
 			return false;
@@ -54,55 +54,64 @@ public class Clientes {
 	}
 
 	public void borrar(Cliente cliente) throws OperationNotSupportedException {
+		if (cliente == null) {
+			throw new NullPointerException("ERROR: No se puede borrar un cliente nulo.");
+		}
+		int ind = buscarIndice(cliente);
 
-		int i;
+		if (ind == tamano + 1) {
+			throw new OperationNotSupportedException("ERROR: No existe ningún cliente como el indicado.");
+		}
 
-		cliente = new Cliente(cliente);
+		else {
 
-		i = buscar(cliente);
-
-		if (i == -1)
-			throw new OperationNotSupportedException("El cliente a borrar no existe.");
-		else
-			desplazarUnaPosicionHaciaIzquierda(i);
+			coleccionClientes[ind] = null;
+			desplazarUnaPosicionHaciaIzquierda(ind);
+			tamano--;
+		}
 
 	}
 
-	public int buscar(Cliente cliente) {
-		int indice = -1;
+	public Cliente buscar(Cliente cliente) {
+		if (cliente == null) {
+			throw new NullPointerException("ERROR: No se puede buscar un cliente nulo.");
+		}
+		Cliente cliEn = null;
 		boolean encontrado = false;
 
 		for (int i = 0; i < coleccionClientes.length && !encontrado; i++) {
 			if (coleccionClientes[i] != null && coleccionClientes[i].equals(cliente)) {
-				indice = i;
+				cliEn= new Cliente (coleccionClientes[i]);
 				encontrado = true;
 			}
 		}
 
-		return indice;
+		return cliEn;
 
 	}
 
-	public static void insertar(Cliente ciente) throws OperationNotSupportedException {
-
-		Cliente cliente = null;
-		int i;
-		cliente = new Cliente(cliente);
-		i = buscarIndice(cliente);
-
-		if (i != -1)
-			coleccionClientes[i] = cliente;
-		else
-			throw new OperationNotSupportedException("El array de clientes está lleno.");
-	}
-
+	public void insertar(Cliente cliente) throws OperationNotSupportedException {
+		if (cliente == null) {
+			throw new NullPointerException("ERROR: No se puede insertar un cliente nulo.");
+		}
+		if (capacidadSuperada(buscarIndice(cliente))) {
+			throw new OperationNotSupportedException("ERROR: No se aceptan más clientes.");
+		}
+		if (!tamanoSuperado(buscarIndice(cliente))) {
+			throw new OperationNotSupportedException("ERROR: Ya existe un cliente con ese dni.");
+		}
+		coleccionClientes[buscarIndice(cliente)] = new Cliente (cliente);
+		tamano++;		
+		}
+	
+	
 	private void desplazarUnaPosicionHaciaIzquierda(int indice) {
 		for (int i = indice; i < coleccionClientes.length - 1 && coleccionClientes[i] != null; i++) {
 			coleccionClientes[i] = coleccionClientes[i + 1];
 		}
 	}
 
-	private static int buscarIndice(Cliente cliente) {
+	private int buscarIndice(Cliente cliente) {
 		int indice = -1;
 		boolean encontrado = false;
 
@@ -111,7 +120,7 @@ public class Clientes {
 				indice = i;
 				encontrado = true;
 			} else {
-				indice = tamano + 1;
+				indice = getTamano() + 1;
 				encontrado = false;
 			}
 		}
