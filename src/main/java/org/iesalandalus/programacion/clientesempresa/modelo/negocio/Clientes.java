@@ -25,7 +25,7 @@ public class Clientes {
 	}
 
 	public Cliente[] get() {
-		return coleccionClientes;
+		return copiaProfundaClientes();
 	}
 
 	private Cliente[] copiaProfundaClientes() {

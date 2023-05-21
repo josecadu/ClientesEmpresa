@@ -19,6 +19,14 @@ public class Cliente {
 	private String correo;
 	private String telefono;
 	private LocalDate fechaNacimiento;
+	
+	public Cliente (String nombre, String dni, String correo, String telefono, LocalDate fechaNacimiento) {
+		setNombre(nombre);
+		setDni(dni);
+		setCorreo(correo);
+		setTelefono(telefono);
+		setFechaNacimiento(fechaNacimiento);
+	}
 
 	public Cliente(Cliente cliente) {
 		if (cliente == null)
